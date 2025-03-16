@@ -35,13 +35,13 @@ El archivo de entrada debe ser un archivo de texto con una matriz de 10x10 donde
 - 3 representa un campo electromagnético.
 - 4 representa un paquete.
 
-    1 1 0 0 0 0 0 1 1 1
-    1 1 0 1 0 1 0 1 1 1
-    0 2 0 3 4 4 0 0 0 0
-    0 1 1 1 0 1 1 1 1 0
-    0 1 1 1 0 0 0 0 0 0
-    3 3 0 1 0 1 1 1 1 1
-    1 1 0 1 0 0 0 0 0 0
-    1 1 0 1 1 1 1 1 1 0
-    1 1 0 0 0 0 4 0 0 0
-    1 1 1 1 1 1 1 1 1 1
+        1 1 0 0 0 0 0 1 1 1
+        1 1 0 1 0 1 0 1 1 1
+        0 2 0 3 4 4 0 0 0 0
+        0 1 1 1 0 1 1 1 1 0
+        0 1 1 1 0 0 0 0 0 0
+        3 3 0 1 0 1 1 1 1 1
+        1 1 0 1 0 0 0 0 0 0
+        1 1 0 1 1 1 1 1 1 0
+        1 1 0 0 0 0 4 0 0 0
+        1 1 1 1 1 1 1 1 1 1
