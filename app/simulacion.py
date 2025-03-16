@@ -33,7 +33,6 @@ class SimulacionDron:
         icono = pygame.image.load(RUTAS_IMAGENES["dron"])
         pygame.display.set_icon(icono)
 
-
         # Cargar imágenes y escalarlas
         self.img_dron = pygame.image.load(RUTAS_IMAGENES["dron"])
         self.img_dron = pygame.transform.scale(self.img_dron, (DIMENSION_CELDA, DIMENSION_CELDA))
@@ -47,7 +46,7 @@ class SimulacionDron:
     def ejecutar_simulacion(self):
         """Inicia la ventana de Pygame y muestra la animación."""
         while self.ejecutando:
-            self.pantalla.fill((240, 240, 240))  # Fondo gris claro
+            self.pantalla.fill((220, 220, 220))  # Fondo gris claro
             self.dibujar_matriz()
 
             for evento in pygame.event.get():
