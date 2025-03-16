@@ -21,27 +21,28 @@ Este proyecto es una simulación de un dron inteligente que debe recoger paquete
 
 ### Estructura y ejecución
 1. El proyecto está dividido en dos módulos principales:
-- interfaz.py: Contiene la interfaz gráfica con Tkinter para cargar el archivo del mundo, seleccionar el algoritmo y visualizar el reporte.
-- simulacion.py: Contiene la lógica de la simulación con Pygame, mostrando la animación del dron.
+    - interfaz.py: Contiene la interfaz gráfica con Tkinter para cargar el archivo del mundo, seleccionar el algoritmo y visualizar el reporte.
+    - simulacion.py: Contiene la lógica de la simulación con Pygame, mostrando la animación del dron.
 
 2. Para ejecutar la aplicación, simplemente ejecuta el archivo interfaz.py:
-    python interfaz.py
+
+        python interfaz.py
 
 3. Formato del Archivo de Entrada:
 El archivo de entrada debe ser un archivo de texto con una matriz de 10x10 donde:
-- 0 representa una casilla libre.
-- 1 representa un obstáculo.
-- 2 representa la posición inicial del dron.
-- 3 representa un campo electromagnético.
-- 4 representa un paquete.
+    - 0 representa una casilla libre.
+    - 1 representa un obstáculo.
+    - 2 representa la posición inicial del dron.
+    - 3 representa un campo electromagnético.
+    - 4 representa un paquete.
 
-        1 1 0 0 0 0 0 1 1 1
-        1 1 0 1 0 1 0 1 1 1
-        0 2 0 3 4 4 0 0 0 0
-        0 1 1 1 0 1 1 1 1 0
-        0 1 1 1 0 0 0 0 0 0
-        3 3 0 1 0 1 1 1 1 1
-        1 1 0 1 0 0 0 0 0 0
-        1 1 0 1 1 1 1 1 1 0
-        1 1 0 0 0 0 4 0 0 0
-        1 1 1 1 1 1 1 1 1 1
+            1 1 0 0 0 0 0 1 1 1
+            1 1 0 1 0 1 0 1 1 1
+            0 2 0 3 4 4 0 0 0 0
+            0 1 1 1 0 1 1 1 1 0
+            0 1 1 1 0 0 0 0 0 0
+            3 3 0 1 0 1 1 1 1 1
+            1 1 0 1 0 0 0 0 0 0
+            1 1 0 1 1 1 1 1 1 0
+            1 1 0 0 0 0 4 0 0 0
+            1 1 1 1 1 1 1 1 1 1
