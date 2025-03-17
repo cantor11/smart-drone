@@ -3,7 +3,7 @@
 
 ### Autores
     Junior Orlando Cantor Arévalo – 2224949 <junior.cantor@correounivalle.edu.co>
-    Junior Orlando Cantor Arévalo – 2224949 <junior.cantor@correounivalle.edu.co>
+    Kevin Jordan Alzate – 2228507 <kevin.jordan@correounivalle.edu.co>
     Junior Orlando Cantor Arévalo – 2224949 <junior.cantor@correounivalle.edu.co>
     Junior Orlando Cantor Arévalo – 2224949 <junior.cantor@correounivalle.edu.co>
 

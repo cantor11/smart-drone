@@ -50,6 +50,11 @@ def borrar_archivo():
 
     boton_informada.config(relief=RAISED)
     boton_no_informada.config(relief=RAISED)
+    
+    # Limpiar el contenido del reporte
+    text_reporte.config(state="normal")
+    text_reporte.delete("1.0", END)
+    text_reporte.config(state="disabled")
 
     messagebox.showinfo("Archivo Borrado", "El archivo ha sido eliminado de la selección.")
 
@@ -73,7 +78,21 @@ def iniciar():
         messagebox.showerror("Error", "Debe seleccionar un algoritmo antes de iniciar la simulación.")
         return
     
-    iniciar_simulacion(mundo)
+    # Llamada a la simulación, que retorna las métricas (esta llamada se bloqueará hasta cerrar la ventana Pygame)
+    metricas = iniciar_simulacion(mundo, algoritmo_seleccionado.get())
+    
+    # Prepara el reporte
+    reporte = "Nodos expandidos: {}\nProfundidad del árbol: {}\nTiempo de cómputo: {:.4f} segundos\n".format(
+        metricas['nodos_expandidos'], metricas['profundidad_arbol'], metricas['tiempo_computo'])
+    
+    if algoritmo_seleccionado.get() in ["Costo uniforme", "A*"]:
+        reporte += "Costo del la solución: {}\n".format(metricas['costo_solucion'])
+        
+    # Actualiza el reporte en la interfaz
+    text_reporte.config(state="normal")
+    text_reporte.delete("1.0", END)
+    text_reporte.insert("1.0", reporte)
+    text_reporte.config(state="disabled")
 
 # Contenedor para cargar el archivo
 contenedor1 = LabelFrame(raiz, text="Datos del entorno", bd=3)
