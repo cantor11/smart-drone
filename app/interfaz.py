@@ -87,9 +87,14 @@ def iniciar():
     # Llamada a la simulación, que retorna las métricas (esta llamada se bloqueará hasta cerrar la ventana Pygame)
     metricas = iniciar_simulacion(mundo, algoritmo_seleccionado.get())
     
-    # Prepara el reporte
-    reporte = "Nodos expandidos: {}\nProfundidad del árbol: {}\nTiempo de cómputo: {:.4f} segundos\n".format(
-        metricas['nodos_expandidos'], metricas['profundidad_arbol'], metricas['tiempo_computo'])
+    if metricas is None:
+        messagebox.showerror("Error", "No se encontró un camino para la simulación.")
+        return
+
+    # Prepara el reporte en milisegundos (ms)
+    reporte = "Nodos expandidos: {}\nProfundidad del árbol: {}\nTiempo de cómputo: {:.4f} ms\n".format(
+    metricas['nodos_expandidos'], metricas['profundidad_arbol'], metricas['tiempo_computo'] * 1000)
+
     
     if algoritmo_seleccionado.get() in ["Costo uniforme", "A*"]:
         reporte += "Costo del la solución: {}\n".format(metricas['costo_solucion'])

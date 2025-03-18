@@ -1,7 +1,8 @@
 import pygame
 import time
 import os
-from algortimos.bfs import bfs
+from algoritmos.bfs import bfs
+from algoritmos.ucs import ucs 
 import copy
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -157,9 +158,9 @@ def calcular_camino(mundo, algoritmo):
             # Calcular el camino con BFS
             camino, nodos, profundidad, tiempo, costo = bfs(mundo, posicion_actual, objetivo)
             
-        # elif algoritmo == "Costo uniforme":
-        #     # Calcular el camino con Costo uniforme
-        #     camino, nodos, profundidad, tiempo, costo = ucs(mundo, posicion_actual, objetivo)
+        elif algoritmo == "Costo uniforme":
+            camino, nodos, profundidad, tiempo, costo = ucs(mundo, posicion_actual, objetivo)
+
         # elif algoritmo == "Profundidad":  
         #     # Calcular el camino con DFS
         #     camino, nodos, profundidad, tiempo, costo = dfs(mundo, posicion_actual, objetivo)
@@ -210,7 +211,7 @@ def iniciar_simulacion(mundo, algoritmo):
     
     camino, metricas = calcular_camino(mundo_planificacion, algoritmo)
     print("Camino calculado:", camino)   
-         
+
     # Crear la simulación pasando el mundo y el camino calculado
     simulacion = SimulacionDron(mundo, camino)
     simulacion.animar_camino()   # Animar el movimiento del dron
