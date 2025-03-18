@@ -92,7 +92,7 @@ def iniciar():
         metricas['nodos_expandidos'], metricas['profundidad_arbol'], metricas['tiempo_computo'])
     
     if algoritmo_seleccionado.get() in ["Costo uniforme", "A*"]:
-        reporte += "Costo del la solución: {}\n".format(metricas['costo_solucion'])
+        reporte += "Costo de la solución: {}\n".format(metricas['costo_solucion'])
         
     # Actualiza el reporte en la interfaz
     text_reporte.config(state="normal")
