@@ -2,9 +2,9 @@
 ## Proyecto 1 de Inteligencia Artifical
 
 ### Autores
-    Junior Orlando Cantor Arévalo – 2224949 <junior.cantor@correounivalle.edu.co>
+    Jorge Enrique Alvarez Valderrama – 2125356 <jorge.valderrama@correounivalle.edu.co>
     Kevin Jordan Alzate – 2228507 <kevin.jordan@correounivalle.edu.co>
-    Junior Orlando Cantor Arévalo – 2224949 <junior.cantor@correounivalle.edu.co>
+    Junior Orlando Cantor Aréval – 2224949 <junior.cantor@correounivalle.edu.co>
     Junior Orlando Cantor Arévalo – 2224949 <junior.cantor@correounivalle.edu.co>
 
 ### Descripción del Proyecto
