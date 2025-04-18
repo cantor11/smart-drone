@@ -164,7 +164,9 @@ def calcular_camino(mundo, algoritmo):
              # Calcular el camino con DFS
         elif algoritmo == "Profundidad":  
             camino, nodos, profundidad, tiempo, costo = dfs(mundo, posicion_actual, objetivo)
-            
+             # Calcular el camino con astar
+         elif algoritmo == "A*": 
+            camino, nodos, profundidad, tiempo, costo = astar(mundo, posicion_actual, objetivo)
         else:
             # Por defecto, usar BFS si no se selecciona ningún algoritmo
             camino, nodos, profundidad, tiempo, costo = bfs(mundo, posicion_actual, objetivo)
