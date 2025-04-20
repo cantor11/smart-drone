@@ -4,7 +4,7 @@
 ### Autores
     Jorge Enrique Alvarez Valderrama – 2125356 <jorge.valderrama@correounivalle.edu.co>
     Kevin Jordan Alzate – 2228507 <kevin.jordan@correounivalle.edu.co>
-    Junior Orlando Cantor Aréval – 2224949 <junior.cantor@correounivalle.edu.co>
+    Heidy Mina Garcia – 1931720 <heidy.mina@correounivalle.edu.co>
     Junior Orlando Cantor Arévalo – 2224949 <junior.cantor@correounivalle.edu.co>
 
 ### Descripción del Proyecto
