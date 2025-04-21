@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk, filedialog, messagebox, PhotoImage
 from simulacion import iniciar_simulacion  # Importamos la función de simulación desde simulacion.py
 import os
+import copy
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # Ruta base del proyecto
 COLOR_FONDO = "#303030"  # Color gris oscuro para el fondo
@@ -19,6 +20,7 @@ style = ttk.Style() # Estilo para el tema de la interfaz
 style.theme_use("vista") # Tema de la interfaz
 
 # Variables globales
+mundo_original = None 
 archivo_cargado = None
 mundo = None
 tipo_busqueda = StringVar(value="")
@@ -31,17 +33,19 @@ opciones_informada = ["Avara", "A*"]
 
 # Función para cargar el archivo TXT
 def cargar_archivo():
-    global archivo_cargado, mundo
+    global archivo_cargado, mundo, mundo_original
     archivo_cargado = filedialog.askopenfilename(filetypes=[("Archivos de texto", "*.txt")])
-    
+
     if archivo_cargado:
         nombre_archivo.set(archivo_cargado.split('/')[-1])
         messagebox.showinfo("Archivo Cargado", "El archivo ha sido cargado con éxito.")
-    
+        
         mundo = []
         with open(archivo_cargado, "r") as archivo:
             for linea in archivo:
                 mundo.append(list(map(int, linea.strip().split())))
+
+        mundo_original = copy.deepcopy(mundo)
 
 # Función para borrar el archivo seleccionado
 def borrar_archivo():
@@ -74,7 +78,8 @@ def seleccionar_busqueda(tipo):
 
 # Función para iniciar la simulación
 def iniciar():
-    if not archivo_cargado or mundo is None:
+    global mundo  # <== usa la global
+    if not archivo_cargado or mundo_original is None:
         messagebox.showerror("Error", "Debe cargar un archivo antes de iniciar la simulación.")
         return
     if not tipo_busqueda.get():
@@ -83,22 +88,23 @@ def iniciar():
     if algoritmo_seleccionado.get() == "...":
         messagebox.showerror("Error", "Debe seleccionar un algoritmo antes de iniciar la simulación.")
         return
-    
-    # Llamada a la simulación, que retorna las métricas (esta llamada se bloqueará hasta cerrar la ventana Pygame)
+
+    # Restaurar el mundo a su estado original antes de cada simulación
+    mundo = copy.deepcopy(mundo_original)
+
+    # Llamada a la simulación
     metricas = iniciar_simulacion(mundo, algoritmo_seleccionado.get())
-    
+
     if metricas is None:
         messagebox.showerror("Error", "No se encontró un camino para la simulación.")
         return
 
-    # Prepara el reporte en milisegundos (ms)
     reporte = "Nodos expandidos: {}\nProfundidad del árbol: {}\nTiempo de cómputo: {:.4f} ms\n".format(
-    metricas['nodos_expandidos'], metricas['profundidad_arbol'], metricas['tiempo_computo'] * 1000)
-    
+        metricas['nodos_expandidos'], metricas['profundidad_arbol'], metricas['tiempo_computo'] * 1000)
+
     if algoritmo_seleccionado.get() in ["Costo uniforme", "A*"]:
         reporte += "Costo de la solución: {}\n".format(metricas['costo_solucion'])
-        
-    # Actualiza el reporte en la interfaz
+
     text_reporte.config(state="normal")
     text_reporte.delete("1.0", END)
     text_reporte.insert("1.0", reporte)
