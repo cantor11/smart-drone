@@ -3,11 +3,22 @@ Este archivo sirve como un módulo común que contiene definiciones de estructur
 unciones auxiliares que pueden ser utilizadas en diferentes partes del proyecto. Su propósito es centralizar y 
 reutilizar código común para evitar duplicación y facilitar el mantenimiento.
 
-Funciones:
-    # Aquí se deben listar las funciones definidas en el módulo con una breve descripción de cada una.
-
 Clases:
-    # Aquí se deben listar las clases definidas en el módulo con una breve descripción de cada una.
+    Nodo:
+        Representa un nodo en el espacio de búsqueda, con información sobre su posición, 
+        costo acumulado y el camino recorrido hasta él.
+        - __init__(posicion, costo=0, camino=None): Inicializa un nodo con su posición, costo y camino.
+        - __lt__(otro): Permite comparar nodos basados en su costo.
+
+Funciones:
+   obtener_vecinos(posicion, mundo):
+        Obtiene las celdas adyacentes (arriba, abajo, izquierda, derecha) que no sean obstáculos (valor 1) 
+        y que se encuentren dentro de los límites de la matriz.
+
+    costo_movimiento(posicion, mundo):
+        Calcula el costo de moverse a una posición específica en el mundo.
+        - Si la celda tiene un campo electromagnético (valor 3), el costo es 8.
+        - En otro caso, el costo es 1.
 """
 
 class Nodo:
@@ -21,9 +32,6 @@ class Nodo:
         return self.costo < otro.costo
     
 def obtener_vecinos(posicion, mundo):
-    """Obtiene las celdas adyacentes (arriba, abajo, izquierda, derecha) 
-    que no sean obstáculos (valor 1) y que se encuentren dentro de la matriz."""
-
     movimientos = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # Arriba, abajo, izquierda, derecha.
     vecinos = []
     filas = len(mundo)
@@ -37,9 +45,6 @@ def obtener_vecinos(posicion, mundo):
     return vecinos
 
 def costo_movimiento(posicion, mundo):
-    """Calcula el costo de moverse a una posición específica en el mundo.
-    Si la celda tiene campo electromagnético (valor 3), el costo es 8; en otro caso, 1."""
-    
     fila, col = posicion
     if mundo[fila][col] == 3:
         return 8
