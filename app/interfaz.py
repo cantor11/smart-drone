@@ -3,9 +3,9 @@ from tkinter import ttk, filedialog, messagebox, PhotoImage
 from simulacion import iniciar_simulacion  # Importamos la función de simulación desde simulacion.py
 import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-COLOR_FONDO = "#303030"
-COLOR_BOTON = "#606060"  # Color negro para botones
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # Ruta base del proyecto
+COLOR_FONDO = "#303030"  # Color gris oscuro para el fondo
+COLOR_BOTON = "#606060"  # Color gris claro para botones
 COLOR_TEXTO = "#FFFFFF"  # Color blanco para el texto de los botones
 
 # Instanciamiento Tkinter
@@ -13,10 +13,10 @@ raiz = Tk()
 raiz.title("Smart Drone")
 raiz.resizable(False, False)  # Bloquear el redimensionamiento de la ventana
 raiz.configure(bg=COLOR_FONDO) # Color de fondo
-icono = PhotoImage(file=os.path.join(BASE_DIR, "assets", "imagenes", "dron.png"))
-raiz.iconphoto(True, icono)
-style = ttk.Style()
-style.theme_use("vista")
+icono = PhotoImage(file=os.path.join(BASE_DIR, "assets", "imagenes", "dron.png")) # Asignacion de icono
+raiz.iconphoto(True, icono) 
+style = ttk.Style() # Estilo para el tema de la interfaz
+style.theme_use("vista") # Tema de la interfaz
 
 # Variables globales
 archivo_cargado = None
@@ -94,7 +94,6 @@ def iniciar():
     # Prepara el reporte en milisegundos (ms)
     reporte = "Nodos expandidos: {}\nProfundidad del árbol: {}\nTiempo de cómputo: {:.4f} ms\n".format(
     metricas['nodos_expandidos'], metricas['profundidad_arbol'], metricas['tiempo_computo'] * 1000)
-
     
     if algoritmo_seleccionado.get() in ["Costo uniforme", "A*"]:
         reporte += "Costo de la solución: {}\n".format(metricas['costo_solucion'])

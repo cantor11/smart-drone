@@ -1,7 +1,7 @@
 """
-Este módulo define las estructuras y funciones auxiliares comunes.
-
-Este archivo sirve como un módulo común que contiene definiciones de estructuras de datos y funciones auxiliares que pueden ser utilizadas en diferentes partes del proyecto. Su propósito es centralizar y reutilizar código común para evitar duplicación y facilitar el mantenimiento.
+Este archivo sirve como un módulo común que contiene definiciones de estructuras de datos y f
+unciones auxiliares que pueden ser utilizadas en diferentes partes del proyecto. Su propósito es centralizar y 
+reutilizar código común para evitar duplicación y facilitar el mantenimiento.
 
 Funciones:
     # Aquí se deben listar las funciones definidas en el módulo con una breve descripción de cada una.
@@ -38,8 +38,8 @@ def obtener_vecinos(posicion, mundo):
 
 def costo_movimiento(posicion, mundo):
     """Calcula el costo de moverse a una posición específica en el mundo.
-     Si la celda tiene campo electromagnético (valor 3), el costo es 8; en otro caso, 1."""
-     
+    Si la celda tiene campo electromagnético (valor 3), el costo es 8; en otro caso, 1."""
+    
     fila, col = posicion
     if mundo[fila][col] == 3:
         return 8

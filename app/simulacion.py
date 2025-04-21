@@ -4,7 +4,8 @@ import os
 from algoritmos.bfs import bfs
 from algoritmos.ucs import ucs 
 from algoritmos.dfs import dfs
-from algortimos.gbfs import gbfs
+from algoritmos.gbfs import gbfs
+from algoritmos.astar import astar
 import copy
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -159,14 +160,14 @@ def calcular_camino(mundo, algoritmo):
         if algoritmo == "Amplitud":
             # Calcular el camino con BFS
             camino, nodos, profundidad, tiempo, costo = bfs(mundo, posicion_actual, objetivo)
-             # Calcular el camino con UCS
+            # Calcular el camino con UCS
         elif algoritmo == "Costo uniforme":
             camino, nodos, profundidad, tiempo, costo = ucs(mundo, posicion_actual, objetivo)
-             # Calcular el camino con DFS
+            # Calcular el camino con DFS
         elif algoritmo == "Profundidad":  
             camino, nodos, profundidad, tiempo, costo = dfs(mundo, posicion_actual, objetivo)
-             # Calcular el camino con astar
-         elif algoritmo == "A*": 
+            # Calcular el camino con astar
+        elif algoritmo == "A*": 
             camino, nodos, profundidad, tiempo, costo = astar(mundo, posicion_actual, objetivo)   
         elif algoritmo == "Avara":
             # Calcular el camino con Busqueda Avara

@@ -1,13 +1,12 @@
 import time
 import heapq
-from .modComun import Nodo, obtener_vecinos, costo_movimiento
+from .modComun import Nodo, obtener_vecinos
 
-def astar(mundo, inicio, objetivo):
+def gbfs(mundo, inicio, objetivo):
     """
-    Realiza la búsqueda A* (A estrella) desde 'inicio' hasta 'objetivo'.
-
-    A* combina el costo acumulado real (g) con una estimación heurística (h) 
-    del costo restante para alcanzar el objetivo, usando la heurística de distancia Manhattan.
+    Realiza la búsqueda avara (Greedy Best-First Search) desde 'inicio' hasta 'objetivo'.
+    En esta estrategia, el dron se mueve siempre hacia el nodo que parece más cercano al objetivo
+    según una heurística (distancia Manhattan), sin considerar el costo real de los movimientos.
 
     Args:
         mundo (list of list): Matriz que representa el entorno (0: vacío, 1: obstáculo, 3: peligro, 4: paquete).
@@ -18,39 +17,38 @@ def astar(mundo, inicio, objetivo):
         tuple: (camino, nodos_expandidos, max_profundidad, tiempo_total, costo_total)
             - camino (list): Lista de posiciones (tuplas) del camino encontrado.
             - nodos_expandidos (int): Número de nodos expandidos durante la búsqueda.
-            - max_profundidad (int): Profundidad máxima alcanzada.
-            - tiempo_total (float): Tiempo de ejecución en segundos.
-            - costo_total (int): Costo total del camino encontrado.
+            - max_profundidad (int): Profundidad máxima alcanzada en el árbol de búsqueda.
+            - tiempo_total (float): Tiempo de ejecución de la búsqueda en segundos.
+            - costo_total (int): Costo total del camino encontrado (sumando costos de celdas peligrosas y normales).
     """
 
-    # Tiempo inicial para medir el rendimiento
-    tiempo_inicio = time.time()
+    tiempo_inicio = time.time()  # Tiempo inicial de la búsqueda
     nodos_expandidos = 0
     max_profundidad = 0
 
-    # Definición de la heurística: distancia de Manhattan
+    # Heurística: distancia Manhattan (|x1 - x2| + |y1 - y2|)
     heuristica = lambda pos: abs(pos[0] - objetivo[0]) + abs(pos[1] - objetivo[1])
 
-    # Cola de prioridad: (f(n), nodo)
+    # Cola de prioridad: ordenada solo por heurística
     cola = []
-    nodo_inicial = Nodo(inicio)
-    heapq.heappush(cola, (heuristica(inicio), nodo_inicial))
+    heapq.heappush(cola, (heuristica(inicio), Nodo(inicio)))
 
-    visitados = set()
+    visitados = set()  # Posiciones visitadas
 
     while cola:
-        # Extrae el nodo con menor costo f(n) = g(n) + h(n)
+        # Extraer el nodo con menor heurística
         _, nodo_actual = heapq.heappop(cola)
         nodos_expandidos += 1
 
-        # Calcula profundidad del nodo actual
+        # Calcular profundidad actual
         profundidad = len(nodo_actual.camino) - 1
         max_profundidad = max(max_profundidad, profundidad)
 
-        # Verificar si alcanzamos el objetivo
+        # Si llegamos al objetivo
         if nodo_actual.posicion == objetivo:
             tiempo_total = time.time() - tiempo_inicio
-            costo_total = nodo_actual.costo
+            # Calcular el costo real del camino encontrado (1 para normal, 8 para peligros)
+            costo_total = sum(1 if mundo[vecino[0]][vecino[1]] != 3 else 8 for vecino in nodo_actual.camino[1:])
             return nodo_actual.camino, nodos_expandidos, max_profundidad, tiempo_total, costo_total
 
         if nodo_actual.posicion in visitados:
@@ -61,11 +59,9 @@ def astar(mundo, inicio, objetivo):
         # Expandir vecinos válidos
         for vecino in obtener_vecinos(nodo_actual.posicion, mundo):
             if vecino not in visitados:
-                nuevo_costo = nodo_actual.costo + costo_movimiento(vecino, mundo)
                 nuevo_camino = nodo_actual.camino + [vecino]
-                f = nuevo_costo + heuristica(vecino)  # f(n) = g(n) + h(n)
-                heapq.heappush(cola, (f, Nodo(vecino, nuevo_costo, nuevo_camino)))
+                heapq.heappush(cola, (heuristica(vecino), Nodo(vecino, camino=nuevo_camino)))
 
-    # Si no se encontró solución
+    # No se encontró solución
     tiempo_total = time.time() - tiempo_inicio
     return None
