@@ -4,6 +4,7 @@ import os
 from algoritmos.bfs import bfs
 from algoritmos.ucs import ucs 
 from algoritmos.dfs import dfs
+from algortimos.gbfs import gbfs
 import copy
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -166,7 +167,10 @@ def calcular_camino(mundo, algoritmo):
             camino, nodos, profundidad, tiempo, costo = dfs(mundo, posicion_actual, objetivo)
              # Calcular el camino con astar
          elif algoritmo == "A*": 
-            camino, nodos, profundidad, tiempo, costo = astar(mundo, posicion_actual, objetivo)
+            camino, nodos, profundidad, tiempo, costo = astar(mundo, posicion_actual, objetivo)   
+        elif algoritmo == "Avara":
+            # Calcular el camino con Busqueda Avara
+            camino, nodos, profundidad, tiempo, costo = gbfs(mundo, posicion_actual, objetivo)
         else:
             # Por defecto, usar BFS si no se selecciona ningún algoritmo
             camino, nodos, profundidad, tiempo, costo = bfs(mundo, posicion_actual, objetivo)
