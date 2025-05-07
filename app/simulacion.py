@@ -1,6 +1,7 @@
 import pygame
 import time
 import os
+from itertools import permutations
 from algoritmos.bfs import bfs
 from algoritmos.ucs import ucs 
 from algoritmos.dfs import dfs
