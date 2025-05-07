@@ -3,7 +3,6 @@ import heapq
 from .modComun import Nodo, obtener_vecinos, costo_movimiento
 
 def ucs(mundo, inicio, objetivo):
-
     # Marcar el tiempo de inicio
     tiempo_inicio = time.time()
     nodos_expandidos = 0

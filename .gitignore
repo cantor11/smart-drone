@@ -1,5 +1,6 @@
 # Ignorar el entorno virtual
 venv/
+.vscode/
 
 # Ignorar archivos y carpetas de Python no deseados
 __pycache__/
