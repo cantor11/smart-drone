@@ -116,47 +116,101 @@ class SimulacionDron:
             if posicion != self.camino[-1]:
                 self.mundo[i][j] = 0
 
+
 def calcular_camino(mundo, algoritmo):
-    """
-    Calcula un camino total que pase por todos los paquetes.
-    Se parte de la posición inicial (valor 2) y, mientras existan paquetes (valor 4),
-    se calcula la ruta al siguiente paquete usando el algoritmo seleccionado.
-    """
     nodos_totales = 0
     profundidad_total = 0
     tiempo_total = 0
     costo_total = 0
     camino_total = []
-    
+
     # Buscar la posición inicial del dron (valor 2)
     inicio = None
     for i in range(FILAS):
         for j in range(COLUMNAS):
             if mundo[i][j] == 2:
-                inicio = (i, j)    # Posición inicial del dron
+                inicio = (i, j)
                 break
         if inicio is not None:
             break
-        
+
     posicion_actual = inicio
-    # Mientras existan paquetes (valor 4), calcular la ruta al siguiente paquete
+
+    if algoritmo in ["Costo uniforme", "A*"]:
+        # Obtener todos los paquetes
+        paquetes = [(i, j) for i in range(FILAS) for j in range(COLUMNAS) if mundo[i][j] == 4]
+
+        # Evaluar todas las permutaciones posibles
+        mejor_camino_global = None
+        mejor_metricas = None
+        mejor_costo_total = float('inf')
+
+        for orden in permutations(paquetes):
+            pos_actual = inicio
+            camino_total_temp = []
+            nodos_totales_temp = 0
+            profundidad_total_temp = 0
+            tiempo_total_temp = 0
+            costo_total_temp = 0
+            mundo_copia = [fila[:] for fila in mundo]  # Clonar mundo
+
+            exito = True
+            for objetivo in orden:
+                if algoritmo == "Costo uniforme":
+                    camino, nodos, profundidad, tiempo, costo = ucs(mundo_copia, pos_actual, objetivo)
+                else:
+                    camino, nodos, profundidad, tiempo, costo = astar(mundo_copia, pos_actual, objetivo)
+
+                if camino is None:
+                    exito = False
+                    break
+
+                if camino_total_temp:
+                    camino_total_temp.extend(camino[1:])
+                else:
+                    camino_total_temp.extend(camino)
+
+                nodos_totales_temp += nodos
+                tiempo_total_temp += tiempo
+                profundidad_total_temp = max(profundidad_total_temp, profundidad)
+                costo_total_temp += costo
+
+                i_obj, j_obj = objetivo
+                mundo_copia[i_obj][j_obj] = 0
+                pos_actual = objetivo
+
+            if exito and costo_total_temp < mejor_costo_total:
+                mejor_costo_total = costo_total_temp
+                mejor_camino_global = camino_total_temp
+                mejor_metricas = {
+                    "nodos_expandidos": nodos_totales_temp,
+                    "profundidad_arbol": profundidad_total_temp,
+                    "tiempo_computo": tiempo_total_temp,
+                    "costo_solucion": costo_total_temp
+                }
+
+        if mejor_camino_global:
+            return mejor_camino_global, mejor_metricas
+        else:
+            print("No se encontró un camino completo a todos los paquetes.")
+            return [], {}
+
+    # Si no es UCS ni A*, se sigue resolviendo paquete por paquete (localmente)
     while any(4 in fila for fila in mundo):
+        # Seleccionar el primer paquete encontrado
         objetivo = None
-        # Buscar la posición del siguiente paquete (valor 4)
         for i in range(FILAS):
             for j in range(COLUMNAS):
                 if mundo[i][j] == 4:
-                    objetivo = (i, j)   # Posición del siguiente paquete
+                    objetivo = (i, j)
                     break
             if objetivo:
                 break
-            
+
         if objetivo is None:
-            break    # No hay más paquetes, salir del bucle
-        
-        # Seleccionar el algoritmo de búsqueda
+            break
+
         if algoritmo == "Amplitud":
-            # Calcular el camino con BFS
             camino, nodos, profundidad, tiempo, costo = bfs(mundo, posicion_actual, objetivo)
             
         # elif algoritmo == "Costo uniforme":
@@ -167,7 +221,6 @@ def calcular_camino(mundo, algoritmo):
             camino, nodos, profundidad, tiempo, costo = dfs(mundo, posicion_actual, objetivo)
         
         elif algoritmo == "Avara":
-            # Calcular el camino con Busqueda Avara
             camino, nodos, profundidad, tiempo, costo = gbfs(mundo, posicion_actual, objetivo)
         
         else:
@@ -176,35 +229,34 @@ def calcular_camino(mundo, algoritmo):
             
         if camino is None:
             print("No se encontró un camino al siguiente paquete en", objetivo)
-            break    # No se encontró un camino, salir del bucle
-        
-        # Acumular métricas (se suma nodos y tiempos, se toma el máximo de profundidad, y se suma costo si aplica)
-        nodos_totales += nodos    # Sumar nodos visitados al total acumulado
-        tiempo_total += tiempo    # Sumar tiempo transcurrido al total acumulado
-        profundidad_total += max(profundidad_total, profundidad)   # Tomar el máximo de la profundidad
+            break
+
+        # Acumular métricas
+        nodos_totales += nodos
+        tiempo_total += tiempo
+        profundidad_total = max(profundidad_total, profundidad)
         if costo is not None:
             costo_total += costo
-        
-        # Evitar duplicar el nodo de partida en la concatenación
+
         if camino_total:
-            camino_total.extend(camino[1:])    # Agregar el camino sin el primer nodo (duplicado)
+            camino_total.extend(camino[1:])
         else:
-            camino_total.extend(camino)    # Agregar el camino completo al camino total
-            
-        # Marcar el paquete como recogido (valor 0)
+            camino_total.extend(camino)
+
         i_objetivo, j_objetivo = objetivo
-        mundo[i_objetivo][j_objetivo] = 0    # Marcar el paquete como recogido
-        # Actualizar la posición actual del dron al final del camino calculado
+        mundo[i_objetivo][j_objetivo] = 0
         posicion_actual = objetivo
-        
+
     metricas = {
         "nodos_expandidos": nodos_totales,
         "profundidad_arbol": profundidad_total,
         "tiempo_computo": tiempo_total,
         "costo_solucion": costo_total
     }
-        
+
     return camino_total, metricas
+
+
 
 def iniciar_simulacion(mundo, algoritmo):
     """
