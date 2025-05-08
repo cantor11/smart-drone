@@ -3,24 +3,6 @@ import heapq
 from .modComun import Nodo, obtener_vecinos
 
 def gbfs(mundo, inicio, objetivo):
-    """
-    Realiza la búsqueda avara (Greedy Best-First Search) desde 'inicio' hasta 'objetivo'.
-    En esta estrategia, el dron se mueve siempre hacia el nodo que parece más cercano al objetivo
-    según una heurística (distancia Manhattan), sin considerar el costo real de los movimientos.
-
-    Args:
-        mundo (list of list): Matriz que representa el entorno (0: vacío, 1: obstáculo, 3: peligro, 4: paquete).
-        inicio (tuple): Posición inicial (fila, columna) del dron.
-        objetivo (tuple): Posición objetivo (fila, columna).
-
-    Returns:
-        tuple: (camino, nodos_expandidos, max_profundidad, tiempo_total, costo_total)
-            - camino (list): Lista de posiciones (tuplas) del camino encontrado.
-            - nodos_expandidos (int): Número de nodos expandidos durante la búsqueda.
-            - max_profundidad (int): Profundidad máxima alcanzada en el árbol de búsqueda.
-            - tiempo_total (float): Tiempo de ejecución de la búsqueda en segundos.
-            - costo_total (int): Costo total del camino encontrado (sumando costos de celdas peligrosas y normales).
-    """
 
     tiempo_inicio = time.time()  # Tiempo inicial de la búsqueda
     nodos_expandidos = 0

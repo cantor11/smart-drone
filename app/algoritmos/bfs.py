@@ -3,24 +3,6 @@ from collections import deque
 from .modComun import Nodo, obtener_vecinos
 
 def bfs(mundo, inicio, objetivo):
-    """
-    Realiza la búsqueda en anchura (BFS: Breadth-First Search) desde 'inicio' hasta 'objetivo'.
-    Esta estrategia explora todos los nodos a una misma profundidad antes de avanzar a la siguiente.
-    Es óptima en términos de número de pasos si los costos de movimiento son iguales.
-
-    Args:
-        mundo (list of list): Matriz que representa el entorno (0: vacío, 1: obstáculo, 3: peligro, 4: paquete).
-        inicio (tuple): Posición inicial (fila, columna) del dron.
-        objetivo (tuple): Posición objetivo (fila, columna).
-
-    Returns:
-        tuple: (camino, nodos_expandidos, max_profundidad, tiempo_total, costo_total)
-            - camino (list): Lista de posiciones (tuplas) del camino encontrado.
-            - nodos_expandidos (int): Número de nodos expandidos durante la búsqueda.
-            - max_profundidad (int): Profundidad máxima alcanzada en el árbol de búsqueda.
-            - tiempo_total (float): Tiempo de ejecución de la búsqueda en segundos.
-            - costo_total (int): Costo total del camino recorrido, considerando zonas peligrosas.
-    """
 
     tiempo_inicio = time.time()  # Tiempo de inicio de la búsqueda
     nodos_expandidos = 0  # Contador de nodos expandidos

@@ -2,25 +2,6 @@ import time
 from .modComun import Nodo, obtener_vecinos
 
 def dfs(mundo, inicio, objetivo):
-    """
-    Realiza la búsqueda en profundidad (Depth-First Search, DFS) evitando ciclos desde 'inicio' hasta 'objetivo'.
-    
-    Explora siempre el último nodo insertado primero (LIFO - Last In First Out), utilizando una pila.
-    Retorna el primer camino encontrado al objetivo.
-
-    Args:
-        mundo (list of list): Matriz que representa el entorno (0: vacío, 1: obstáculo, 3: peligro, 4: paquete).
-        inicio (tuple): Posición inicial del dron (fila, columna).
-        objetivo (tuple): Posición objetivo (fila, columna).
-
-    Returns:
-        tuple: (camino, nodos_expandidos, max_profundidad, tiempo_total, costo_total)
-            - camino (list): Lista de posiciones (tuplas) del camino encontrado.
-            - nodos_expandidos (int): Número de nodos expandidos.
-            - max_profundidad (int): Máxima profundidad alcanzada.
-            - tiempo_total (float): Tiempo total de ejecución en segundos.
-            - costo_total (int): Costo total del camino basado en el terreno (1 o 8 por casilla).
-    """
 
     # Marcar tiempo de inicio de la búsqueda
     tiempo_inicio = time.time()
