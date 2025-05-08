@@ -89,24 +89,28 @@ class SimulacionDron:
             return
         
         # Remover la posición inicial del dron (valor 2) para evitar superposición
-        inicio = None
         for i in range(FILAS):
             for j in range(COLUMNAS):
                 if self.mundo[i][j] == 2:
-                    inicio = (i, j)
                     self.mundo[i][j] = 0  # Limpiar la posición inicial del dron
                     break
-            if inicio:
-                break
-            
-        # Iterar sobre cada posicion del camino
-        for posicion in self.camino:
+                
+        posicion_anterior = None
+        for idx, posicion in enumerate(self.camino):
             i, j = posicion
-            # Si en la posición hay un paquete (valor 4), se considera recogido y se limpia la celda
+            
+            # Limpiar posición anterior del dron
+            if posicion_anterior:
+                pi, pj = posicion_anterior
+                self.mundo[pi][pj] = 0  # Limpiar la posición anterior del dron
+            
+            # Recolectar paquete si existe
             if self.mundo[i][j] == 4:
-                self.mundo[i][j] = 0  # Limpiar la posición del paquete
-            # Colocar el dron en la nueva posición (valor 2)
+                self.mundo[i][j] = 0
+                
+            # Dibujar el dron en la nueva posición
             self.mundo[i][j] = 2
+            posicion_anterior = (i, j)  # Actualizar la posición anterior
             
             # Actualizar la pantalla para mostrar el movimiento
             self.pantalla.fill((240, 240, 240))
@@ -114,9 +118,11 @@ class SimulacionDron:
             pygame.display.flip()
             time.sleep(0.5)
             
-            # Si no es la última posición, limpiar la celda actual para continuar la animación
-            if posicion != self.camino[-1]:
-                self.mundo[i][j] = 0
+            # Mantener la posición del dron en la última posición
+            if idx == len(self.camino) - 1:
+                self.mundo[i][j] = 2
+            else:
+                self.mundo[i][j] = 0  
 
 def calcular_camino(mundo, algoritmo):
     """
