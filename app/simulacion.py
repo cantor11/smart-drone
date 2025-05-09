@@ -115,6 +115,7 @@ class SimulacionDron:
                 self.mundo[i][j] = 0
 
 
+
 def calcular_camino(mundo, algoritmo):
     FILAS = len(mundo)
     COLUMNAS = len(mundo[0]) if FILAS > 0 else 0
@@ -142,23 +143,26 @@ def calcular_camino(mundo, algoritmo):
     posicion_actual = inicio
 
     if algoritmo in ["Costo uniforme", "A*", "Amplitud", "Profundidad", "Avara"]:
+        # Obtener todas las posiciones de paquetes (valor 4)
         paquetes = [(i, j) for i in range(FILAS) for j in range(COLUMNAS) if mundo[i][j] == 4]
 
         mejor_camino_global = None
         mejor_metricas = None
         mejor_costo_total = float('inf')
 
+        # Probar todas las permutaciones posibles de los paquetes
         for orden in permutations(paquetes):
             pos_actual = inicio
             camino_temp = []
             nodos_temp = 0
-            profundidad_temp = 0
+            profundidad_temp = 0  # Se guarda la mayor profundidad de todas las búsquedas
             tiempo_temp = 0
             costo_temp = 0
-            mundo_copia = [fila[:] for fila in mundo]
+            mundo_copia = [fila[:] for fila in mundo]  # Copia del mundo para esta permutación
             exito = True
-            
+
             for objetivo in orden:
+                # Ejecutar el algoritmo de búsqueda correspondiente
                 if algoritmo == "Costo uniforme":
                     camino, nodos, profundidad, tiempo, costo = ucs(mundo_copia, pos_actual, objetivo)
                 elif algoritmo == "A*":
@@ -171,21 +175,28 @@ def calcular_camino(mundo, algoritmo):
                     camino, nodos, profundidad, tiempo, costo = gbfs(mundo_copia, pos_actual, objetivo)
                 else:
                     continue
+
                 if camino is None:
                     exito = False
                     break
+
+                # Agregar el camino evitando duplicar la posición actual
                 if camino_temp:
                     camino_temp.extend(camino[1:])
                 else:
                     camino_temp.extend(camino)
+
                 nodos_temp += nodos
                 tiempo_temp += tiempo
-                profundidad_temp = max(profundidad_temp, profundidad)
+                profundidad_temp = max(profundidad_temp, profundidad)  # Se guarda la mayor profundidad
                 costo_temp += costo
+
+                # Marcar paquete como recogido
                 i_obj, j_obj = objetivo
                 mundo_copia[i_obj][j_obj] = 0
                 pos_actual = objetivo
 
+            # Verificar si este orden es mejor que los anteriores
             if exito and costo_temp < mejor_costo_total:
                 mejor_costo_total = costo_temp
                 mejor_camino_global = camino_temp
@@ -195,12 +206,17 @@ def calcular_camino(mundo, algoritmo):
                     "tiempo_computo": tiempo_temp,
                     "costo_solucion": costo_temp
                 }
-                
+
         if mejor_camino_global:
             return mejor_camino_global, mejor_metricas
         else:
             print("No se encontró un camino completo a todos los paquetes.")
             return [], {}
+
+    else:
+        print("Algoritmo no reconocido.")
+        return [], {}
+
 
 
 def iniciar_simulacion(mundo, algoritmo):
