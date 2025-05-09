@@ -116,106 +116,158 @@ class SimulacionDron:
 
 
 
+# ------------------------------------------------------------------
+# Diccionario para invocar los algoritmos sin duplicar condicionales
+# ------------------------------------------------------------------
+BUSCADORES = {
+    "Costo uniforme": ucs,
+    "A*": astar,
+    "Amplitud": bfs,
+    "Profundidad": dfs,
+    "Avara": gbfs,
+}
+
 def calcular_camino(mundo, algoritmo):
     FILAS = len(mundo)
-    COLUMNAS = len(mundo[0]) if FILAS > 0 else 0
+    COLUMNAS = len(mundo[0]) if FILAS else 0
 
-    nodos_totales = 0
-    profundidad_total = 0
-    tiempo_total = 0
-    costo_total = 0
-    camino_total = []
-
-    # Buscar la posición inicial del dron (valor 2)
-    inicio = None
-    for i in range(FILAS):
-        for j in range(COLUMNAS):
-            if mundo[i][j] == 2:
-                inicio = (i, j)
-                break
-        if inicio:
-            break
-
+    # ---------------------------------------------------------------
+    # 1. Buscar punto de inicio (valor 2)
+    # ---------------------------------------------------------------
+    inicio = next(((i, j) for i in range(FILAS)
+                   for j in range(COLUMNAS) if mundo[i][j] == 2), None)
     if inicio is None:
         print("No se encontró el punto de inicio.")
         return [], {}
 
-    posicion_actual = inicio
+    # ---------------------------------------------------------------
+    # 2. Obtener posiciones de todos los paquetes (valor 4)
+    # ---------------------------------------------------------------
+    paquetes = [(i, j) for i in range(FILAS)
+                for j in range(COLUMNAS) if mundo[i][j] == 4]
+    if not paquetes:
+        print("No hay paquetes que recoger.")
+        return [], {}
 
-    if algoritmo in ["Costo uniforme", "A*", "Amplitud", "Profundidad", "Avara"]:
-        # Obtener todas las posiciones de paquetes (valor 4)
-        paquetes = [(i, j) for i in range(FILAS) for j in range(COLUMNAS) if mundo[i][j] == 4]
-
-        mejor_camino_global = None
+    # ---------------------------------------------------------------
+    # 3. Elegir estrategia según algoritmo
+    # ---------------------------------------------------------------
+    if algoritmo in ("Costo uniforme", "A*"):
+        # -----------------------------------------------------------
+        # Estrategia exhaus­tiva: probar todas las permutaciones
+        # -----------------------------------------------------------
+        mejor_camino = None
         mejor_metricas = None
-        mejor_costo_total = float('inf')
+        mejor_costo   = float('inf')
 
-        # Probar todas las permutaciones posibles de los paquetes
         for orden in permutations(paquetes):
-            pos_actual = inicio
-            camino_temp = []
-            nodos_temp = 0
-            profundidad_temp = 0  # Se guarda la mayor profundidad de todas las búsquedas
-            tiempo_temp = 0
-            costo_temp = 0
-            mundo_copia = [fila[:] for fila in mundo]  # Copia del mundo para esta permutación
-            exito = True
+            camino_tmp, metricas_tmp = _recorre_en_orden(
+                mundo, inicio, orden, algoritmo)
+            if camino_tmp and metricas_tmp["costo_solucion"] < mejor_costo:
+                mejor_camino   = camino_tmp
+                mejor_metricas = metricas_tmp
+                mejor_costo    = metricas_tmp["costo_solucion"]
 
-            for objetivo in orden:
-                # Ejecutar el algoritmo de búsqueda correspondiente
-                if algoritmo == "Costo uniforme":
-                    camino, nodos, profundidad, tiempo, costo = ucs(mundo_copia, pos_actual, objetivo)
-                elif algoritmo == "A*":
-                    camino, nodos, profundidad, tiempo, costo = astar(mundo_copia, pos_actual, objetivo)
-                elif algoritmo == "Amplitud":
-                    camino, nodos, profundidad, tiempo, costo = bfs(mundo_copia, pos_actual, objetivo)
-                elif algoritmo == "Profundidad":
-                    camino, nodos, profundidad, tiempo, costo = dfs(mundo_copia, pos_actual, objetivo)
-                elif algoritmo == "Avara":
-                    camino, nodos, profundidad, tiempo, costo = gbfs(mundo_copia, pos_actual, objetivo)
-                else:
-                    continue
-
-                if camino is None:
-                    exito = False
-                    break
-
-                # Agregar el camino evitando duplicar la posición actual
-                if camino_temp:
-                    camino_temp.extend(camino[1:])
-                else:
-                    camino_temp.extend(camino)
-
-                nodos_temp += nodos
-                tiempo_temp += tiempo
-                profundidad_temp = max(profundidad_temp, profundidad)  # Se guarda la mayor profundidad
-                costo_temp += costo
-
-                # Marcar paquete como recogido
-                i_obj, j_obj = objetivo
-                mundo_copia[i_obj][j_obj] = 0
-                pos_actual = objetivo
-
-            # Verificar si este orden es mejor que los anteriores
-            if exito and costo_temp < mejor_costo_total:
-                mejor_costo_total = costo_temp
-                mejor_camino_global = camino_temp
-                mejor_metricas = {
-                    "nodos_expandidos": nodos_temp,
-                    "profundidad_arbol": profundidad_temp,
-                    "tiempo_computo": tiempo_temp,
-                    "costo_solucion": costo_temp
-                }
-
-        if mejor_camino_global:
-            return mejor_camino_global, mejor_metricas
-        else:
-            print("No se encontró un camino completo a todos los paquetes.")
-            return [], {}
+        if mejor_camino:
+            return mejor_camino, mejor_metricas
+        print("No se encontró un camino completo a todos los paquetes.")
+        return [], {}
 
     else:
-        print("Algoritmo no reconocido.")
-        return [], {}
+        # -----------------------------------------------------------
+        # Estrategia rápida: ir tomando el primer paquete hallado
+        # -----------------------------------------------------------
+        camino, metricas = _recorre_secuencial(
+            mundo, inicio, algoritmo)
+        return camino, metricas
+
+
+# ------------------------------------------------------------------
+# Función auxiliar: recorre un conjunto de paquetes en un orden dado
+# ------------------------------------------------------------------
+def _recorre_en_orden(mundo, inicio, orden, algoritmo):
+    mundo_copia = [fila[:] for fila in mundo]
+    pos_actual  = inicio
+
+    camino_total = []
+    nodos_totales, tiempo_total, profundidad_max, costo_total = 0, 0, 0, 0
+
+    buscador = BUSCADORES[algoritmo]
+
+    for objetivo in orden:
+        camino, nodos, profundidad, tiempo, costo = buscador(
+            mundo_copia, pos_actual, objetivo)
+
+        if camino is None:
+            return None, {}
+
+        camino_total.extend(camino if not camino_total else camino[1:])
+        nodos_totales   += nodos
+        tiempo_total    += tiempo
+        profundidad_max = max(profundidad_max, profundidad)
+        costo_total     += costo
+
+        i, j = objetivo
+        mundo_copia[i][j] = 0          # Marcar paquete recogido
+        pos_actual = objetivo
+
+    metricas = {
+        "nodos_expandidos": nodos_totales,
+        "profundidad_arbol": profundidad_max,
+        "tiempo_computo": tiempo_total,
+        "costo_solucion": costo_total,
+    }
+    return camino_total, metricas
+
+
+# ------------------------------------------------------------------
+# Función auxiliar: estrategia rápida (primera posición con 4)
+# ------------------------------------------------------------------
+def _recorre_secuencial(mundo, inicio, algoritmo):
+    FILAS = len(mundo)
+    COLUMNAS = len(mundo[0])
+    pos_actual = inicio
+    camino_total = []
+    nodos_totales, tiempo_total, profundidad_max, costo_total = 0, 0, 0, 0
+
+    buscador = BUSCADORES[algoritmo]
+
+    while any(4 in fila for fila in mundo):
+        # Buscar el primer paquete restante
+        objetivo = next(((i, j) for i in range(FILAS)
+                         for j in range(COLUMNAS) if mundo[i][j] == 4), None)
+        print("Buscando paquete en:", objetivo)
+        if objetivo is None:
+            break
+
+        camino, nodos, profundidad, tiempo, costo = buscador(
+            mundo, pos_actual, objetivo)
+
+        if camino is None:
+            print("No se encontró un camino al paquete", objetivo)
+            break
+
+        # Recorre el camino y recoge paquetes en el trayecto
+        for idx, (i, j) in enumerate(camino):
+            if mundo[i][j] == 4:
+                print(f"Recogido paquete en: ({i}, {j})")
+                mundo[i][j] = 0
+        # Evita repetir la posición inicial si ya está en el camino_total
+        camino_total.extend(camino if not camino_total else camino[1:])
+        nodos_totales += nodos
+        tiempo_total += tiempo
+        profundidad_max = max(profundidad_max, profundidad)
+        costo_total += costo
+
+        pos_actual = objetivo
+
+    metricas = {
+        "nodos_expandidos": nodos_totales,
+        "profundidad_arbol": profundidad_max,
+        "tiempo_computo": tiempo_total,
+        "costo_solucion": costo_total,
+    }
+    return camino_total, metricas
 
 
 
